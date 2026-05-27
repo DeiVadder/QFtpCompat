@@ -95,8 +95,7 @@ $(function(){initNavTree('index.html','',''); });
 <div class="textblock"><p><a class="anchor" id="md__r_e_a_d_m_e"></a></p>
 <p>A Qt6-compatible asynchronous FTP client library. <br  />
  Drop-in replacement for the <span class="tt">QFtp</span> class that was removed from Qt5.</p>
-<p>📖 <b><a href="https://YOUR_GITHUB_USERNAME.github.io/QFtpCompat/html/">API Documentation</a></b> <br  />
- <em>(replace <span class="tt">YOUR_GITHUB_USERNAME</span> with your GitHub username after pushing)</em></p>
+<p><b><a href="https://DeiVadder.github.io/QFtpCompat/html/">API Documentation</a></b></p>
 <hr  />
 <h1 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
 Requirements</h1>
@@ -157,7 +156,7 @@ Quick start</h1>
 <div class="line">ftp-&gt;close();</div>
 <div class="ttc" id="aclass_q_ftp_compat_dir_entry_html"><div class="ttname"><a href="class_q_ftp_compat_dir_entry.html">QFtpCompatDirEntry</a></div><div class="ttdoc">Represents a single entry from an FTP LIST response.</div><div class="ttdef"><b>Definition</b> <a href="qftpcompatdirentry_8h_source.html#l00030">qftpcompatdirentry.h:31</a></div></div>
 <div class="ttc" id="aclass_q_ftp_compat_dir_entry_html_a70a47d6c573e5f08e19cbbc9863ed014"><div class="ttname"><a href="class_q_ftp_compat_dir_entry.html#a70a47d6c573e5f08e19cbbc9863ed014">QFtpCompatDirEntry::toString</a></div><div class="ttdeci">QString toString() const</div><div class="ttdoc">Returns a human-readable summary for debug output.</div><div class="ttdef"><b>Definition</b> <a href="qftpcompatdirentry_8cpp_source.html#l00241">qftpcompatdirentry.cpp:241</a></div></div>
-<div class="ttc" id="aclass_q_ftp_compat_html"><div class="ttname"><a href="class_q_ftp_compat.html">QFtpCompat</a></div><div class="ttdoc">Asynchronous FTP client for Qt6.</div><div class="ttdef"><b>Definition</b> <a href="qftpcompat_8h_source.html#l00066">qftpcompat.h:67</a></div></div>
+<div class="ttc" id="aclass_q_ftp_compat_html"><div class="ttname"><a href="class_q_ftp_compat.html">QFtpCompat</a></div><div class="ttdoc">Asynchronous FTP client for Qt6.</div><div class="ttdef"><b>Definition</b> <a href="qftpcompat_8h_source.html#l00069">qftpcompat.h:70</a></div></div>
 <div class="ttc" id="aclass_q_ftp_compat_html_a13070cc3dc545f90f55114fed8991036"><div class="ttname"><a href="class_q_ftp_compat.html#a13070cc3dc545f90f55114fed8991036">QFtpCompat::done</a></div><div class="ttdeci">void done(bool error)</div><div class="ttdoc">Emitted when all queued commands have completed.</div></div>
 <div class="ttc" id="aclass_q_ftp_compat_html_aa6c7c624a147899f3149edcbe514e84e"><div class="ttname"><a href="class_q_ftp_compat.html#aa6c7c624a147899f3149edcbe514e84e">QFtpCompat::listInfo</a></div><div class="ttdeci">void listInfo(QFtpCompatDirEntry entry)</div><div class="ttdoc">Emitted once per entry during a list() command.</div></div>
 <div class="ttc" id="aclass_q_ftp_compat_html_ab823d92ebf752ee5092710d1ad669b14"><div class="ttname"><a href="class_q_ftp_compat.html#ab823d92ebf752ee5092710d1ad669b14">QFtpCompat::commandFinished</a></div><div class="ttdeci">void commandFinished(int id, bool error)</div><div class="ttdoc">Emitted when a command completes (successfully or with error).</div></div>
@@ -263,38 +262,56 @@ Directory entry format</h1>
 <hr  />
 <h1 class="doxsection"><a class="anchor" id="autotoc_md21"></a>
 Testing</h1>
-<p>The <span class="tt">test/</span> directory contains a standalone Qt console application that exercises every public API method against a real FTP server.</p>
+<p>The <span class="tt">test/</span> directory contains a standalone Qt console application that exercises every public API method against both a plain FTP server and an Explicit FTPS server.</p>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md22"></a>
-Server setup</h2>
-<div class="fragment"><div class="line">pip3 install pyftpdlib</div>
-<div class="line">mkdir ~/ftproot &amp;&amp; cd ~/ftproot</div>
-<div class="line">python3 -m pyftpdlib -u root -P root -w -p 2121</div>
+Dependencies</h2>
+<div class="fragment"><div class="line">pip3 install pyftpdlib pyopenssl</div>
 </div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md23"></a>
-Build and run</h2>
+Step 1 – Create a test directory</h2>
+<div class="fragment"><div class="line">mkdir ~/ftproot</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md24"></a>
+Step 2 – Generate a self-signed certificate (once)</h2>
+<div class="fragment"><div class="line">cd ~/ftproot</div>
+<div class="line">openssl req -x509 -newkey rsa:2048 \</div>
+<div class="line">    -keyout key.pem -out cert.pem \</div>
+<div class="line">    -days 365 -nodes -subj &quot;/CN=localhost&quot;</div>
+</div><!-- fragment --><blockquote class="doxtable">
+<p>The certificate is only used locally for testing. Do <b>not</b> commit <span class="tt">*.pem</span> files – they are excluded by <span class="tt">.gitignore</span>. </p>
+</blockquote>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md25"></a>
+Step 3 – Start both servers (two terminals)</h2>
+<p><b>Terminal 1 – plain FTP (port 2121):</b> </p><div class="fragment"><div class="line">cd ~/ftproot</div>
+<div class="line">python3 -m pyftpdlib -u root -P root -w -p 2121</div>
+</div><!-- fragment --><p><b>Terminal 2 – Explicit FTPS (port 2122):</b> </p><div class="fragment"><div class="line">cd ~/ftproot</div>
+<div class="line">python3 /path/to/QFtpCompat/test/server_tls.py</div>
+</div><!-- fragment --><p>Both servers use <span class="tt">~/ftproot</span> as their root directory and <span class="tt">root</span> / <span class="tt">root</span> as credentials.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md26"></a>
+Step 4 – Build and run the test</h2>
 <div class="fragment"><div class="line">cd test</div>
 <div class="line">mkdir build &amp;&amp; cd build</div>
 <div class="line">cmake .. -DCMAKE_PREFIX_PATH=/path/to/Qt6</div>
 <div class="line">cmake --build .</div>
 <div class="line">./FtpCompatTest</div>
-</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md24"></a>
+</div><!-- fragment --><blockquote class="doxtable">
+<p><b>TLS server not available?</b> The test still runs – plain FTP completes normally, then the FTPS section reports <span class="tt">[FAIL] OPEN (FTPS) connection refused</span> and exits cleanly without hanging. </p>
+</blockquote>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md27"></a>
 Coverage</h2>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md28"></a>
+Plain FTP (port 2121)</h3>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Test case  </th><th class="markdownTableHeadNone">What is verified  </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Initial cleanup  </td><td class="markdownTableBodyNone">Removes leftover files silently  </td></tr>
-<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><span class="tt">open()</span>  </td><td class="markdownTableBodyNone">Login with credentials in <span class="tt">QUrl</span>  </td></tr>
-<tr class="markdownTableRowOdd">
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><span class="tt">put(QByteArray)</span>  </td><td class="markdownTableBodyNone">Upload from memory  </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><span class="tt">put(QIODevice*)</span>  </td><td class="markdownTableBodyNone">Upload 128 KB file with progress events  </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><span class="tt">mkdir()</span>  </td><td class="markdownTableBodyNone">Create subdirectory  </td></tr>
+<td class="markdownTableBodyNone"><span class="tt">put(QIODevice*)</span>  </td><td class="markdownTableBodyNone">Upload 128 KB file with chunked progress  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><span class="tt">list()</span> root  </td><td class="markdownTableBodyNone">Expected entry count  </td></tr>
+<td class="markdownTableBodyNone"><span class="tt">mkdir()</span> / <span class="tt">rmdir()</span>  </td><td class="markdownTableBodyNone">Directory lifecycle  </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><span class="tt">list()</span> subdir  </td><td class="markdownTableBodyNone">Uploaded file is visible  </td></tr>
+<td class="markdownTableBodyNone"><span class="tt">list()</span> root + subdir  </td><td class="markdownTableBodyNone">Entry count and file visibility  </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><span class="tt">get(QByteArray*)</span>  </td><td class="markdownTableBodyNone">Download + byte-exact content comparison  </td></tr>
 <tr class="markdownTableRowOdd">
@@ -304,33 +321,52 @@ Coverage</h2>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><span class="tt">remove()</span>  </td><td class="markdownTableBodyNone">Delete all test files  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><span class="tt">rmdir()</span>  </td><td class="markdownTableBodyNone">Remove test subdirectory  </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><span class="tt">pwd()</span>  </td><td class="markdownTableBodyNone">Reply received via <span class="tt">rawCommandReply</span>  </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><span class="tt">rawCommand("NOOP")</span>  </td><td class="markdownTableBodyNone">Raw command path smoke test  </td></tr>
+<td class="markdownTableBodyNone"><span class="tt">pwd()</span> / <span class="tt">rawCommand()</span>  </td><td class="markdownTableBodyNone">Raw command path  </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><span class="tt">get()</span> non-existent file  </td><td class="markdownTableBodyNone">550 error received as expected  </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Final <span class="tt">list()</span>  </td><td class="markdownTableBodyNone">Server root empty – full cleanup confirmed  </td></tr>
 </table>
-<p>Expected output:</p>
-<div class="fragment"><div class="line">[OK  ] OPEN</div>
-<div class="line">[OK  ] UPLOAD small / large / nested</div>
-<div class="line">[OK  ] MKDIR</div>
-<div class="line">[OK  ] LIST /       → root entries: 3</div>
-<div class="line">[OK  ] LIST subdir  → nested.txt: yes ✓</div>
-<div class="line">[OK  ] DOWNLOAD→QByteArray  → content match: ✓</div>
-<div class="line">[OK  ] DOWNLOAD→QFile       → 131085 bytes</div>
-<div class="line">[OK  ] RENAME / DELETE ×3 / RMDIR</div>
-<div class="line">[OK  ] PWD / NOOP</div>
-<div class="line">[OK  ] DOWNLOAD ghost  (error as expected: 550)</div>
-<div class="line">[OK  ] LIST final   → 0 entries (clean ✓)</div>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md29"></a>
+Explicit FTPS (port 2122)</h3>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Test case  </th><th class="markdownTableHeadNone">What is verified  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">open(..., Explicit)</span>  </td><td class="markdownTableBodyNone"><span class="tt">AUTH TLS</span> → <span class="tt">PBSZ 0</span> → <span class="tt">PROT P</span> → login  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Self-signed certificate  </td><td class="markdownTableBodyNone"><span class="tt">sslErrors → ignoreSslErrors</span> accepted  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">put()</span> over TLS  </td><td class="markdownTableBodyNone">Upload on encrypted data channel  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">list()</span>  </td><td class="markdownTableBodyNone">File visible in encrypted directory listing  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">get()</span> over TLS  </td><td class="markdownTableBodyNone">Download + byte-exact content comparison  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">remove()</span> + final <span class="tt">list()</span>  </td><td class="markdownTableBodyNone">Cleanup confirmed  </td></tr>
+</table>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md30"></a>
+Expected output (both servers running)</h2>
+<div class="fragment"><div class="line">── CONNECT (plain)</div>
+<div class="line">  [OK  ] OPEN</div>
+<div class="line">  [OK  ] UPLOAD small / large / nested</div>
+<div class="line">  ...</div>
+<div class="line">  [OK  ] LIST final   → 0 entries (clean ✓)</div>
+<div class="line">══ Plain FTP complete ══</div>
+<div class="line"> </div>
 <div class="line">══════════════════════════════════════════</div>
-<div class="line"> QFtpCompat test complete</div>
+<div class="line"> Explicit FTPS test (port 2122)</div>
 <div class="line">══════════════════════════════════════════</div>
+<div class="line">── CONNECT (Explicit FTPS – AUTH TLS)</div>
+<div class="line">  [OK  ] OPEN (FTPS)</div>
+<div class="line">  [OK  ] UPLOAD         → encrypted data channel</div>
+<div class="line">  [OK  ] LIST           → tls_test.txt visible ✓</div>
+<div class="line">  [OK  ] DOWNLOAD       → content match ✓</div>
+<div class="line">  [OK  ] DELETE</div>
+<div class="line">  [OK  ] LIST final     → 0 entries (clean ✓)</div>
+<div class="line">══ Explicit FTPS complete ══</div>
 </div><!-- fragment --><hr  />
-<h1 class="doxsection"><a class="anchor" id="autotoc_md26"></a>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md32"></a>
 Building the documentation</h1>
 <div class="fragment"><div class="line">cmake -DQFTPCOMPAT_BUILD_DOCS=ON ..</div>
 <div class="line">cmake --build . --target QFtpCompat_docs</div>
@@ -340,7 +376,7 @@ Building the documentation</h1>
 </div><!-- fragment --><p>The generated HTML is copied to <span class="tt">docs/html/</span> automatically, ready for GitHub Pages (see below).</p>
 <p>Requires <a href="https://www.doxygen.nl">Doxygen</a>. <br  />
  <a href="https://graphviz.org">Graphviz</a> (<span class="tt">dot</span>) is optional but enables class diagrams.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md27"></a>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md33"></a>
 Publishing to GitHub Pages</h2>
 <ol type="1">
 <li>Push the repository to GitHub.</li>
@@ -350,7 +386,7 @@ Publishing to GitHub Pages</h2>
 <div class="fragment"><div class="line">https://YOUR_GITHUB_USERNAME.github.io/QFtpCompat/html/</div>
 </div><!-- fragment --><p>Update the link at the top of this README to match.</p>
 <hr  />
-<h1 class="doxsection"><a class="anchor" id="autotoc_md29"></a>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md35"></a>
 License</h1>
 <p>MIT – see [LICENSE](LICENSE). </p>
 </div></div><!-- PageDoc -->

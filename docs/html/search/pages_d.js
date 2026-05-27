@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['recommended_0',['As a CMake subdirectory (recommended)',['../index.html#autotoc_md5',1,'']]],
-  ['requirements_1',['Requirements',['../index.html#autotoc_md2',1,'']]],
-  ['run_2',['Build and run',['../index.html#autotoc_md23',1,'']]]
+  ['management_0',['Directory / management',['../index.html#autotoc_md12',1,'']]],
+  ['mode_1',['Connection mode',['../index.html#autotoc_md16',1,'']]],
+  ['modes_2',['modes',['../class_q_ftp_compat.html#qftpcompat_modes',1,'Transfer modes'],['../index.html#autotoc_md15',1,'Transfer modes']]]
 ];

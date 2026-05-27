@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['server_20setup_0',['Server setup',['../index.html#autotoc_md22',1,'']]],
-  ['setup_1',['Server setup',['../index.html#autotoc_md22',1,'']]],
-  ['signals_2',['Signals',['../index.html#autotoc_md13',1,'']]],
-  ['start_3',['Quick start',['../index.html#autotoc_md7',1,'']]],
-  ['subdirectory_20recommended_4',['As a CMake subdirectory (recommended)',['../index.html#autotoc_md5',1,'']]]
+  ['once_0',['Step 2 – Generate a self-signed certificate (once)',['../index.html#autotoc_md24',1,'']]],
+  ['output_20both_20servers_20running_1',['Expected output (both servers running)',['../index.html#autotoc_md30',1,'']]],
+  ['overview_2',['API overview',['../index.html#autotoc_md9',1,'']]]
 ];

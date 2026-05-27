@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['directory_20entry_20format_0',['Directory entry format',['../index.html#autotoc_md19',1,'']]],
-  ['directory_20management_1',['Directory / management',['../index.html#autotoc_md12',1,'']]],
-  ['documentation_2',['Building the documentation',['../index.html#autotoc_md26',1,'']]]
+  ['4_20–_20build_20and_20run_20the_20test_0',['Step 4 – Build and run the test',['../index.html#autotoc_md26',1,'']]]
 ];

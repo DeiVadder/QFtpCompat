@@ -42,14 +42,21 @@ var NAVTREE =
     ] ],
     [ "Directory entry format", "index.html#autotoc_md19", null ],
     [ "Testing", "index.html#autotoc_md21", [
-      [ "Server setup", "index.html#autotoc_md22", null ],
-      [ "Build and run", "index.html#autotoc_md23", null ],
-      [ "Coverage", "index.html#autotoc_md24", null ]
+      [ "Dependencies", "index.html#autotoc_md22", null ],
+      [ "Step 1 – Create a test directory", "index.html#autotoc_md23", null ],
+      [ "Step 2 – Generate a self-signed certificate (once)", "index.html#autotoc_md24", null ],
+      [ "Step 3 – Start both servers (two terminals)", "index.html#autotoc_md25", null ],
+      [ "Step 4 – Build and run the test", "index.html#autotoc_md26", null ],
+      [ "Coverage", "index.html#autotoc_md27", [
+        [ "Plain FTP (port 2121)", "index.html#autotoc_md28", null ],
+        [ "Explicit FTPS (port 2122)", "index.html#autotoc_md29", null ]
+      ] ],
+      [ "Expected output (both servers running)", "index.html#autotoc_md30", null ]
     ] ],
-    [ "Building the documentation", "index.html#autotoc_md26", [
-      [ "Publishing to GitHub Pages", "index.html#autotoc_md27", null ]
+    [ "Building the documentation", "index.html#autotoc_md32", [
+      [ "Publishing to GitHub Pages", "index.html#autotoc_md33", null ]
     ] ],
-    [ "License", "index.html#autotoc_md29", null ],
+    [ "License", "index.html#autotoc_md35", null ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],

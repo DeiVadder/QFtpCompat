@@ -1,12 +1,11 @@
 var searchData=
 [
-  ['pages_0',['Publishing to GitHub Pages',['../index.html#autotoc_md27',1,'']]],
-  ['parseerror_1',['ParseError',['../class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79ae41199faa7290c167f70f314c5e6c165',1,'QFtpCompat']]],
-  ['parselist_2',['parseList',['../class_q_ftp_compat_dir_entry.html#a713dce959e7e98dc65463543677d3ba5',1,'QFtpCompatDirEntry']]],
-  ['passive_3',['Passive',['../class_q_ftp_compat.html#a2fe18339a60b4f2d769b1245e71458ebaf80bc338b6146b566004a046f8137c85',1,'QFtpCompat']]],
-  ['permissiondenied_4',['PermissionDenied',['../class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a4b33a686be73bb172407d73b26356275',1,'QFtpCompat']]],
-  ['permissions_5',['permissions',['../class_q_ftp_compat_dir_entry.html#a85018759815ee3e499b29ffa536e5fa8',1,'QFtpCompatDirEntry']]],
-  ['publishing_20to_20github_20pages_6',['Publishing to GitHub Pages',['../index.html#autotoc_md27',1,'']]],
-  ['put_7',['put',['../class_q_ftp_compat.html#a3706cd14c85fd80aa99d3d400ebb7277',1,'QFtpCompat::put(const QUrl &amp;url, const QByteArray &amp;data, TransferType type=TransferType::Binary)'],['../class_q_ftp_compat.html#a281ecdbdaf734a968beb3c06890c3da3',1,'QFtpCompat::put(const QUrl &amp;url, QIODevice *src, TransferType type=TransferType::Binary)']]],
-  ['pwd_8',['pwd',['../class_q_ftp_compat.html#a1d6e34731f624ac1d42add6737440297',1,'QFtpCompat']]]
+  ['lastmodified_0',['lastModified',['../class_q_ftp_compat_dir_entry.html#a7d10ca04b3c4bfe46bcaed64af2ed2c0',1,'QFtpCompatDirEntry']]],
+  ['license_1',['License',['../index.html#autotoc_md35',1,'']]],
+  ['linktarget_2',['linkTarget',['../class_q_ftp_compat_dir_entry.html#af7cc6923c5d03d94abbbdd0e223e3cd5',1,'QFtpCompatDirEntry']]],
+  ['list_3',['list',['../class_q_ftp_compat.html#a7c1a55fae7437b0ba591e4f547ae41f9',1,'QFtpCompat']]],
+  ['listinfo_4',['listInfo',['../class_q_ftp_compat.html#aa6c7c624a147899f3149edcbe514e84e',1,'QFtpCompat']]],
+  ['localfileerror_5',['LocalFileError',['../class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a7fc2cecf98f99f1e5af13c63caac23e5',1,'QFtpCompat']]],
+  ['loggedin_6',['LoggedIn',['../class_q_ftp_compat.html#ac8fc79652a5445cb1f3cb4410ac5e4a6afebcd1edf6010db4858e623d1dd2f3bc',1,'QFtpCompat']]],
+  ['loginfailed_7',['LoginFailed',['../class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a6347e854fac7c2ce131527e32f2f8571',1,'QFtpCompat']]]
 ];

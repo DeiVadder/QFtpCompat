@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['open_0',['open',['../class_q_ftp_compat.html#a9df9202fc66dfac2d3bf3e6cd567e9eb',1,'QFtpCompat']]],
-  ['overview_1',['API overview',['../index.html#autotoc_md9',1,'']]],
-  ['owner_2',['owner',['../class_q_ftp_compat_dir_entry.html#a238dd03e6a4dcd07361a94765feaa2c7',1,'QFtpCompatDirEntry']]]
+  ['ignoresslerrors_0',['ignoreSslErrors',['../class_q_ftp_compat.html#a60ec09067462871e121a631d5c38d505',1,'QFtpCompat']]],
+  ['integration_1',['Integration',['../index.html#autotoc_md4',1,'']]],
+  ['isdirectory_2',['isDirectory',['../class_q_ftp_compat_dir_entry.html#ab8d279e1e83e68df78f1e97245c7c298',1,'QFtpCompatDirEntry']]],
+  ['issymlink_3',['isSymLink',['../class_q_ftp_compat_dir_entry.html#a65e7f2986c678768a6b70a852386298b',1,'QFtpCompatDirEntry']]]
 ];

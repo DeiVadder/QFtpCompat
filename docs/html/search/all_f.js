@@ -1,12 +1,9 @@
 var searchData=
 [
-  ['rawcommand_0',['rawCommand',['../class_q_ftp_compat.html#a3e68a13521e0e9ed4c6e82b360e8959a',1,'QFtpCompat']]],
-  ['rawcommandreply_1',['rawCommandReply',['../class_q_ftp_compat.html#a48efca2e7b76fc918cd8d4d6ddb95c26',1,'QFtpCompat']]],
-  ['recommended_2',['As a CMake subdirectory (recommended)',['../index.html#autotoc_md5',1,'']]],
-  ['remove_3',['remove',['../class_q_ftp_compat.html#a08504eb757e634be31737eb3a374b98c',1,'QFtpCompat']]],
-  ['rename_4',['rename',['../class_q_ftp_compat.html#aafa6a3c0223bb4f086465712824449c0',1,'QFtpCompat']]],
-  ['requirements_5',['Requirements',['../index.html#autotoc_md2',1,'']]],
-  ['resetconnection_6',['resetConnection',['../class_q_ftp_compat.html#ac1e0a702a96bb6b4b5ec871c92183cbc',1,'QFtpCompat']]],
-  ['rmdir_7',['rmdir',['../class_q_ftp_compat.html#a308f728975318b1edb02cf1bfedf47b8',1,'QFtpCompat']]],
-  ['run_8',['Build and run',['../index.html#autotoc_md23',1,'']]]
+  ['name_0',['name',['../class_q_ftp_compat_dir_entry.html#a67d5aef531556f2bb4fb9a1c2d097dce',1,'QFtpCompatDirEntry']]],
+  ['networkerror_1',['NetworkError',['../class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a47423b8444592efbe331550c5620e821',1,'QFtpCompat']]],
+  ['networktimeout_2',['NetworkTimeout',['../class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79af042264b75411a8baf7f90a760610ad2',1,'QFtpCompat']]],
+  ['noerror_3',['NoError',['../class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a70a47cae4eb221930f2663fd244369ea',1,'QFtpCompat']]],
+  ['notconnected_4',['NotConnected',['../class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a4075072d219e061ca0f3124f8fbef463',1,'QFtpCompat']]],
+  ['notloggedin_5',['NotLoggedIn',['../class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a68118f8d291e5a67d4d9c3408a083c69',1,'QFtpCompat']]]
 ];

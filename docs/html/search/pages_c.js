@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['qftpcompat_0',['QFtpCompat',['../index.html',1,'']]],
-  ['quick_20start_1',['Quick start',['../index.html#autotoc_md7',1,'']]]
+  ['license_0',['License',['../index.html#autotoc_md35',1,'']]]
 ];
