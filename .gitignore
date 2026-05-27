@@ -1,5 +1,8 @@
 
 *.user
+*.zip
+*.7z
+*.rar
 
 # Build directories
 build/
