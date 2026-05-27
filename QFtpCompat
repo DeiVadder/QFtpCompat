@@ -1,0 +1,14 @@
+// Convenience umbrella header for the QFtpCompat library.
+//
+// Users include this single file to get the complete public API:
+//
+//   #include <QFtpCompat>
+//
+// The internal header layout (qftpcompat.h, qftpcompatdirentry.h) is
+// an implementation detail and may change between library versions.
+// Always include this file, never the individual headers directly.
+
+#pragma once
+
+#include "qftpcompat.h"
+#include "qftpcompatdirentry.h"

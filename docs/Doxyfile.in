@@ -1,0 +1,87 @@
+# Doxyfile.in – processed by CMake configure_file().
+# Variables in @...@ are substituted at configure time.
+# Do not edit the generated Doxyfile in the build directory directly.
+
+# ---------------------------------------------------------------------------
+# Project
+# ---------------------------------------------------------------------------
+PROJECT_NAME           = "@PROJECT_NAME@"
+PROJECT_NUMBER         = "@PROJECT_VERSION@"
+PROJECT_BRIEF          = "Qt6-compatible async FTP client library"
+
+OUTPUT_DIRECTORY       = "@DOXYGEN_OUTPUT_DIR@"
+
+# ---------------------------------------------------------------------------
+# Input
+# ---------------------------------------------------------------------------
+INPUT                  = "@CMAKE_CURRENT_SOURCE_DIR@"
+FILE_PATTERNS          = *.h *.cpp *.md
+RECURSIVE              = NO
+
+# Exclude private implementation headers – these are not part of the API.
+EXCLUDE                = "@CMAKE_CURRENT_SOURCE_DIR@/private"
+
+# Pull in the README as the main page
+USE_MDFILE_AS_MAINPAGE = "@CMAKE_CURRENT_SOURCE_DIR@/README.md"
+
+# ---------------------------------------------------------------------------
+# Extraction
+# ---------------------------------------------------------------------------
+EXTRACT_ALL            = NO
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+HIDE_UNDOC_MEMBERS     = YES
+HIDE_UNDOC_CLASSES     = YES
+
+# Show Qt Q_SIGNALS / Q_SLOTS sections correctly
+PREDEFINED             = Q_SIGNALS=signals Q_SLOTS=slots Q_OBJECT= Q_ENUM(x)=
+
+# ---------------------------------------------------------------------------
+# Output formats
+# ---------------------------------------------------------------------------
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+GENERATE_MAN           = NO
+GENERATE_XML           = NO
+
+HTML_OUTPUT            = html
+HTML_DYNAMIC_SECTIONS  = YES
+
+# Produce a single compressed HTML archive (optional, comment out if unwanted)
+# GENERATE_HTMLHELP      = YES
+
+# ---------------------------------------------------------------------------
+# Graphs (requires Graphviz dot)
+# ---------------------------------------------------------------------------
+HAVE_DOT               = @DOXYGEN_HAVE_DOT@
+DOT_MULTI_TARGETS      = YES
+CLASS_DIAGRAMS         = YES
+CLASS_GRAPH            = YES
+COLLABORATION_GRAPH    = NO
+INCLUDE_GRAPH          = NO
+INCLUDED_BY_GRAPH      = NO
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
+
+# ---------------------------------------------------------------------------
+# Warnings
+# ---------------------------------------------------------------------------
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+QUIET                  = NO
+
+# ---------------------------------------------------------------------------
+# Source browsing
+# ---------------------------------------------------------------------------
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+STRIP_CODE_COMMENTS    = YES
+
+# ---------------------------------------------------------------------------
+# Miscellaneous
+# ---------------------------------------------------------------------------
+ALPHABETICAL_INDEX     = YES
+SHOW_USED_FILES        = YES
+SHOW_FILES             = YES
+SHOW_NAMESPACES        = YES

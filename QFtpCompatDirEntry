@@ -1,0 +1,6 @@
+// Convenience header – forwards to the QFtpCompatDirEntry class.
+//
+//   #include <QFtpCompatDirEntry>
+
+#pragma once
+#include "qftpcompatdirentry.h"

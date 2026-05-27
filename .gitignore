@@ -1,0 +1,14 @@
+
+*.user
+
+# Build directories
+build/
+
+# macOS
+.DS_Store
+
+# Qt Creator
+.qtcreator/
+
+# Temp files
+struktur.txt

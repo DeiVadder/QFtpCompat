@@ -1,0 +1,65 @@
+var class_q_ftp_compat =
+[
+    [ "Error", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79", [
+      [ "NoError", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a70a47cae4eb221930f2663fd244369ea", null ],
+      [ "HostNotFound", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79afadea6847567986b6b3ba99c3db06640", null ],
+      [ "ConnectionRefused", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79aa41e9791d8a1b6a003deb6c6a7bfb4c0", null ],
+      [ "NetworkTimeout", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79af042264b75411a8baf7f90a760610ad2", null ],
+      [ "NetworkError", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a47423b8444592efbe331550c5620e821", null ],
+      [ "NotConnected", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a4075072d219e061ca0f3124f8fbef463", null ],
+      [ "NotLoggedIn", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a68118f8d291e5a67d4d9c3408a083c69", null ],
+      [ "LoginFailed", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a6347e854fac7c2ce131527e32f2f8571", null ],
+      [ "FileNotFound", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a2767828026039e8ba7b38973cbb701f2", null ],
+      [ "PermissionDenied", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a4b33a686be73bb172407d73b26356275", null ],
+      [ "ServerError", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a7d65c64901711bc2cd2a33ff2641fbe9", null ],
+      [ "ParseError", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79ae41199faa7290c167f70f314c5e6c165", null ],
+      [ "LocalFileError", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a7fc2cecf98f99f1e5af13c63caac23e5", null ],
+      [ "Aborted", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79a721c28f4c74928cc9e0bb3fef345e408", null ],
+      [ "TransferFailed", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79adfead1190472442ff0cb2402ac3d4e49", null ],
+      [ "UnknownError", "class_q_ftp_compat.html#a980baf20f54b8600841056faa174aa79abfaef30f1c8011c5cefa38ae470fb7aa", null ]
+    ] ],
+    [ "State", "class_q_ftp_compat.html#ac8fc79652a5445cb1f3cb4410ac5e4a6", [
+      [ "Unconnected", "class_q_ftp_compat.html#ac8fc79652a5445cb1f3cb4410ac5e4a6a221346c406dc9e8d4e1c66f29cc5f13a", null ],
+      [ "Connecting", "class_q_ftp_compat.html#ac8fc79652a5445cb1f3cb4410ac5e4a6ae321c53b354930ba96f0243e652df458", null ],
+      [ "Connected", "class_q_ftp_compat.html#ac8fc79652a5445cb1f3cb4410ac5e4a6a2ec0d16e4ca169baedb9b2d50ec5c6d7", null ],
+      [ "LoggedIn", "class_q_ftp_compat.html#ac8fc79652a5445cb1f3cb4410ac5e4a6afebcd1edf6010db4858e623d1dd2f3bc", null ],
+      [ "Closing", "class_q_ftp_compat.html#ac8fc79652a5445cb1f3cb4410ac5e4a6a5c8de6f894682fdb1786037b2040a26e", null ]
+    ] ],
+    [ "TransferMode", "class_q_ftp_compat.html#a2fe18339a60b4f2d769b1245e71458eb", [
+      [ "Passive", "class_q_ftp_compat.html#a2fe18339a60b4f2d769b1245e71458ebaf80bc338b6146b566004a046f8137c85", null ],
+      [ "Active", "class_q_ftp_compat.html#a2fe18339a60b4f2d769b1245e71458eba4d3d769b812b6faa6b76e1a8abaece2d", null ]
+    ] ],
+    [ "TransferType", "class_q_ftp_compat.html#aeb8fe1783dd9f1db0618800e1326751f", [
+      [ "Binary", "class_q_ftp_compat.html#aeb8fe1783dd9f1db0618800e1326751fa6ce976e8f061b2b5cfe4d0c50c3405dd", null ],
+      [ "Ascii", "class_q_ftp_compat.html#aeb8fe1783dd9f1db0618800e1326751fa76b8d0dcd02ccaf203c167ced6d7ef31", null ]
+    ] ],
+    [ "abort", "class_q_ftp_compat.html#a0be77a7a1169d1f10d43553b24e94299", null ],
+    [ "cd", "class_q_ftp_compat.html#a4507b2327922fa897c5b3519c83ba045", null ],
+    [ "clearPendingCommands", "class_q_ftp_compat.html#acb07f156c9b0b97d29c517695447250a", null ],
+    [ "close", "class_q_ftp_compat.html#aa83937d0869d1fd530c03974d48d8ba4", null ],
+    [ "commandFinished", "class_q_ftp_compat.html#ab823d92ebf752ee5092710d1ad669b14", null ],
+    [ "commandStarted", "class_q_ftp_compat.html#a7be689d66d1b555b79ba5ab075f658a2", null ],
+    [ "currentId", "class_q_ftp_compat.html#a00349f7e5e80d4cadb4717248a1d3f0c", null ],
+    [ "dataTransferProgress", "class_q_ftp_compat.html#aef40f16fa44ea307db731f9c68a86cf1", null ],
+    [ "done", "class_q_ftp_compat.html#a13070cc3dc545f90f55114fed8991036", null ],
+    [ "error", "class_q_ftp_compat.html#ab616fb6c66155128de53781aa6a48851", null ],
+    [ "errorString", "class_q_ftp_compat.html#ae21d13d1757031e195ce1535b94ac47f", null ],
+    [ "get", "class_q_ftp_compat.html#a8037355d114f952aa753ee83b35abd12", null ],
+    [ "get", "class_q_ftp_compat.html#abebe0ac093974668ea2db77ec4630560", null ],
+    [ "hasPendingCommands", "class_q_ftp_compat.html#ad91522c481d5c3d33138225e0c209fbe", null ],
+    [ "list", "class_q_ftp_compat.html#a7c1a55fae7437b0ba591e4f547ae41f9", null ],
+    [ "listInfo", "class_q_ftp_compat.html#aa6c7c624a147899f3149edcbe514e84e", null ],
+    [ "mkdir", "class_q_ftp_compat.html#a6bc99da9d97b498fc4e4015a32c4ea0a", null ],
+    [ "open", "class_q_ftp_compat.html#a9df9202fc66dfac2d3bf3e6cd567e9eb", null ],
+    [ "put", "class_q_ftp_compat.html#a3706cd14c85fd80aa99d3d400ebb7277", null ],
+    [ "put", "class_q_ftp_compat.html#a281ecdbdaf734a968beb3c06890c3da3", null ],
+    [ "pwd", "class_q_ftp_compat.html#a1d6e34731f624ac1d42add6737440297", null ],
+    [ "rawCommand", "class_q_ftp_compat.html#a3e68a13521e0e9ed4c6e82b360e8959a", null ],
+    [ "rawCommandReply", "class_q_ftp_compat.html#a48efca2e7b76fc918cd8d4d6ddb95c26", null ],
+    [ "remove", "class_q_ftp_compat.html#a08504eb757e634be31737eb3a374b98c", null ],
+    [ "rename", "class_q_ftp_compat.html#aafa6a3c0223bb4f086465712824449c0", null ],
+    [ "resetConnection", "class_q_ftp_compat.html#ac1e0a702a96bb6b4b5ec871c92183cbc", null ],
+    [ "rmdir", "class_q_ftp_compat.html#a308f728975318b1edb02cf1bfedf47b8", null ],
+    [ "state", "class_q_ftp_compat.html#a0dc2243579d5e12b3f2abc30afb5ee8e", null ],
+    [ "stateChanged", "class_q_ftp_compat.html#a448562e12a968e2d0aad6da163716c69", null ]
+];
