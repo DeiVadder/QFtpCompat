@@ -17,7 +17,7 @@
  *
  * \author Jonas Hilk
  * \date   2024 Created
- * \date   2024 Updated
+ * \date   2026 Updated
  */
 
 #include <QCoreApplication>

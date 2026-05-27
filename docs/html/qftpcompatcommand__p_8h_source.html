@@ -97,7 +97,7 @@ $(function(){initNavTree('qftpcompatcommand__p_8h_source.html','',''); });
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="qftpcompat_8h.html">qftpcompat.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;qftpcompat.h&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;QByteArray&gt;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;QIODevice&gt;</span></div>
@@ -134,15 +134,11 @@ $(function(){initNavTree('qftpcompatcommand__p_8h_source.html','',''); });
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    QByteArray *byteArrayDst{<span class="keyword">nullptr</span>}; </div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordtype">bool</span>        ownsDevice{<span class="keyword">false</span>}; </div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <a class="code hl_enumeration" href="class_q_ftp_compat.html#aeb8fe1783dd9f1db0618800e1326751f">QFtpCompat::TransferType</a>   transferType{<a class="code hl_enumvalue" href="class_q_ftp_compat.html#aeb8fe1783dd9f1db0618800e1326751fa6ce976e8f061b2b5cfe4d0c50c3405dd">QFtpCompat::TransferType::Binary</a>};</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <a class="code hl_enumeration" href="class_q_ftp_compat.html#a51c9350aab21729442aca7ca9ec73258">QFtpCompat::EncryptionMode</a> encMode{QFtpCompat::EncryptionMode::None};</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    QFtpCompat::TransferType   transferType{QFtpCompat::TransferType::Binary};</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    QFtpCompat::EncryptionMode encMode{QFtpCompat::EncryptionMode::None};</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>};</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>} <span class="comment">// namespace QFtpCompatInternal</span></div>
-<div class="ttc" id="aclass_q_ftp_compat_html_a51c9350aab21729442aca7ca9ec73258"><div class="ttname"><a href="class_q_ftp_compat.html#a51c9350aab21729442aca7ca9ec73258">QFtpCompat::EncryptionMode</a></div><div class="ttdeci">EncryptionMode</div><div class="ttdoc">FTP encryption mode. \value None Plain FTP – default, fully backward-compatible. \value Explicit Expl...</div><div class="ttdef"><b>Definition</b> <a href="qftpcompat_8h_source.html#l00149">qftpcompat.h:149</a></div></div>
-<div class="ttc" id="aclass_q_ftp_compat_html_aeb8fe1783dd9f1db0618800e1326751f"><div class="ttname"><a href="class_q_ftp_compat.html#aeb8fe1783dd9f1db0618800e1326751f">QFtpCompat::TransferType</a></div><div class="ttdeci">TransferType</div><div class="ttdoc">FTP data representation type (RFC 959 §3.1.1).</div><div class="ttdef"><b>Definition</b> <a href="qftpcompat_8h_source.html#l00137">qftpcompat.h:137</a></div></div>
-<div class="ttc" id="aclass_q_ftp_compat_html_aeb8fe1783dd9f1db0618800e1326751fa6ce976e8f061b2b5cfe4d0c50c3405dd"><div class="ttname"><a href="class_q_ftp_compat.html#aeb8fe1783dd9f1db0618800e1326751fa6ce976e8f061b2b5cfe4d0c50c3405dd">QFtpCompat::TransferType::Binary</a></div><div class="ttdeci">@ Binary</div><div class="ttdoc">TYPE I – raw binary (8-bit) transfer. Fully implemented.</div><div class="ttdef"><b>Definition</b> <a href="qftpcompat_8h_source.html#l00138">qftpcompat.h:138</a></div></div>
-<div class="ttc" id="aqftpcompat_8h_html"><div class="ttname"><a href="qftpcompat_8h.html">qftpcompat.h</a></div><div class="ttdoc">Qt6-compatible async FTP client.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

@@ -1,8 +1,5 @@
 var files_dup =
 [
-    [ "qftpcompat.cpp", "qftpcompat_8cpp_source.html", null ],
-    [ "qftpcompat.h", "qftpcompat_8h.html", "qftpcompat_8h" ],
-    [ "qftpcompatcommand_p.h", "qftpcompatcommand__p_8h_source.html", null ],
-    [ "qftpcompatdirentry.cpp", "qftpcompatdirentry_8cpp_source.html", null ],
-    [ "qftpcompatdirentry.h", "qftpcompatdirentry_8h.html", "qftpcompatdirentry_8h" ]
+    [ "src", "dir_68267d1309a1af8e8297ef4c3efbcdba.html", "dir_68267d1309a1af8e8297ef4c3efbcdba" ],
+    [ "test", "dir_13e138d54eb8818da29c3992edef070a.html", "dir_13e138d54eb8818da29c3992edef070a" ]
 ];

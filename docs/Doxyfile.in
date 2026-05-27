@@ -1,4 +1,4 @@
-# Doxyfile.in – processed by CMake configure_file().
+# Doxyfile.in – processed by CMake configure_file()
 # Variables in @...@ are substituted at configure time.
 # Do not edit the generated Doxyfile in the build directory directly.
 
@@ -14,15 +14,25 @@ OUTPUT_DIRECTORY       = "@DOXYGEN_OUTPUT_DIR@"
 # ---------------------------------------------------------------------------
 # Input
 # ---------------------------------------------------------------------------
-INPUT                  = "@CMAKE_CURRENT_SOURCE_DIR@"
+
+# Library public API (src/) + integration test (test/)
+INPUT                  = "@CMAKE_CURRENT_SOURCE_DIR@/src" \
+                         "@CMAKE_CURRENT_SOURCE_DIR@/test" \
+                         "@CMAKE_CURRENT_SOURCE_DIR@/README.md"
+
 FILE_PATTERNS          = *.h *.cpp *.md
 RECURSIVE              = NO
 
-# Exclude private implementation headers – these are not part of the API.
-EXCLUDE                = "@CMAKE_CURRENT_SOURCE_DIR@/private"
+# Exclude private implementation headers – not part of the public API.
+EXCLUDE                = "@CMAKE_CURRENT_SOURCE_DIR@/src/private"
 
-# Pull in the README as the main page
+# Pull README in as the main/index page.
 USE_MDFILE_AS_MAINPAGE = "@CMAKE_CURRENT_SOURCE_DIR@/README.md"
+
+# Make test/main.cpp browsable as a runnable example in the docs.
+EXAMPLE_PATH           = "@CMAKE_CURRENT_SOURCE_DIR@/test"
+EXAMPLE_PATTERNS       = main.cpp server_tls.py
+EXAMPLE_RECURSIVE      = NO
 
 # ---------------------------------------------------------------------------
 # Extraction
@@ -46,9 +56,6 @@ GENERATE_XML           = NO
 
 HTML_OUTPUT            = html
 HTML_DYNAMIC_SECTIONS  = YES
-
-# Produce a single compressed HTML archive (optional, comment out if unwanted)
-# GENERATE_HTMLHELP      = YES
 
 # ---------------------------------------------------------------------------
 # Graphs (requires Graphviz dot)

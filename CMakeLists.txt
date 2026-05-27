@@ -24,25 +24,25 @@ endif()
 # Without this, signals and slots silently disappear at link time.
 # ------------------------------------------------------------------
 set(QFTPCOMPAT_PUBLIC_HEADERS
-    qftpcompat.h
-    qftpcompatdirentry.h
+    src/qftpcompat.h
+    src/qftpcompatdirentry.h
 )
 
 # Qt-style convenience headers (no extension).
 # Users write: #include <QFtpCompat>
 # These are listed separately so the install rule can find them.
 set(QFTPCOMPAT_UMBRELLA_HEADERS
-    QFtpCompat
-    QFtpCompatDirEntry
+    src/QFtpCompat
+    src/QFtpCompatDirEntry
 )
 
 set(QFTPCOMPAT_PRIVATE_HEADERS
-    private/qftpcompatcommand_p.h
+    src/private/qftpcompatcommand_p.h
 )
 
 set(QFTPCOMPAT_SOURCES
-    qftpcompat.cpp
-    qftpcompatdirentry.cpp
+    src/qftpcompat.cpp
+    src/qftpcompatdirentry.cpp
 )
 
 # qt_add_library is the Qt6-idiomatic replacement for add_library.
@@ -68,7 +68,7 @@ add_library(QFtpCompat::QFtpCompat ALIAS QFtpCompat)
 # ------------------------------------------------------------------
 target_include_directories(QFtpCompat
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         $<INSTALL_INTERFACE:include/QFtpCompat>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/private
