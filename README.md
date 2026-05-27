@@ -3,8 +3,7 @@
 A Qt6-compatible asynchronous FTP client library.  
 Drop-in replacement for the `QFtp` class that was removed from Qt5.
 
-📖 **[API Documentation](https://YOUR_GITHUB_USERNAME.github.io/QFtpCompat/html/)**  
-_(replace `YOUR_GITHUB_USERNAME` with your GitHub username after pushing)_
+**[API Documentation](https://DeiVadder.github.io/QFtpCompat/html/)**
 
 ---
 
