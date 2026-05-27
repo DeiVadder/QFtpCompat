@@ -152,17 +152,51 @@ Active mode (PORT) is reserved as `TransferMode::Active` for a future release.
 ## Testing
 
 The `test/` directory contains a standalone Qt console application that
-exercises every public API method against a real FTP server.
+exercises every public API method against both a plain FTP server and an
+Explicit FTPS server.
 
-### Server setup
+### Dependencies
 
 ```bash
-pip3 install pyftpdlib
-mkdir ~/ftproot && cd ~/ftproot
+pip3 install pyftpdlib pyopenssl
+```
+
+### Step 1 – Create a test directory
+
+```bash
+mkdir ~/ftproot
+```
+
+### Step 2 – Generate a self-signed certificate (once)
+
+```bash
+cd ~/ftproot
+openssl req -x509 -newkey rsa:2048 \
+    -keyout key.pem -out cert.pem \
+    -days 365 -nodes -subj "/CN=localhost"
+```
+
+> The certificate is only used locally for testing.
+> Do **not** commit `*.pem` files – they are excluded by `.gitignore`.
+
+### Step 3 – Start both servers (two terminals)
+
+**Terminal 1 – plain FTP (port 2121):**
+```bash
+cd ~/ftproot
 python3 -m pyftpdlib -u root -P root -w -p 2121
 ```
 
-### Build and run
+**Terminal 2 – Explicit FTPS (port 2122):**
+```bash
+cd ~/ftproot
+python3 /path/to/QFtpCompat/test/server_tls.py
+```
+
+Both servers use `~/ftproot` as their root directory and
+`root` / `root` as credentials.
+
+### Step 4 – Build and run the test
 
 ```bash
 cd test
@@ -172,44 +206,62 @@ cmake --build .
 ./FtpCompatTest
 ```
 
+> **TLS server not available?**
+> The test still runs – plain FTP completes normally, then the FTPS
+> section reports `[FAIL] OPEN (FTPS) connection refused` and exits
+> cleanly without hanging.
+
 ### Coverage
+
+#### Plain FTP (port 2121)
 
 | Test case | What is verified |
 |---|---|
-| Initial cleanup | Removes leftover files silently |
 | `open()` | Login with credentials in `QUrl` |
 | `put(QByteArray)` | Upload from memory |
-| `put(QIODevice*)` | Upload 128 KB file with progress events |
-| `mkdir()` | Create subdirectory |
-| `list()` root | Expected entry count |
-| `list()` subdir | Uploaded file is visible |
+| `put(QIODevice*)` | Upload 128 KB file with chunked progress |
+| `mkdir()` / `rmdir()` | Directory lifecycle |
+| `list()` root + subdir | Entry count and file visibility |
 | `get(QByteArray*)` | Download + byte-exact content comparison |
 | `get(QIODevice*)` | Download 128 KB to `QFile`, size verified |
 | `rename()` | `RNFR`/`RNTO` round-trip |
 | `remove()` | Delete all test files |
-| `rmdir()` | Remove test subdirectory |
-| `pwd()` | Reply received via `rawCommandReply` |
-| `rawCommand("NOOP")` | Raw command path smoke test |
+| `pwd()` / `rawCommand()` | Raw command path |
 | `get()` non-existent file | 550 error received as expected |
 | Final `list()` | Server root empty – full cleanup confirmed |
 
-Expected output:
+#### Explicit FTPS (port 2122)
+
+| Test case | What is verified |
+|---|---|
+| `open(..., Explicit)` | `AUTH TLS` → `PBSZ 0` → `PROT P` → login |
+| Self-signed certificate | `sslErrors → ignoreSslErrors` accepted |
+| `put()` over TLS | Upload on encrypted data channel |
+| `list()` | File visible in encrypted directory listing |
+| `get()` over TLS | Download + byte-exact content comparison |
+| `remove()` + final `list()` | Cleanup confirmed |
+
+### Expected output (both servers running)
 
 ```
-[OK  ] OPEN
-[OK  ] UPLOAD small / large / nested
-[OK  ] MKDIR
-[OK  ] LIST /       → root entries: 3
-[OK  ] LIST subdir  → nested.txt: yes ✓
-[OK  ] DOWNLOAD→QByteArray  → content match: ✓
-[OK  ] DOWNLOAD→QFile       → 131085 bytes
-[OK  ] RENAME / DELETE ×3 / RMDIR
-[OK  ] PWD / NOOP
-[OK  ] DOWNLOAD ghost  (error as expected: 550)
-[OK  ] LIST final   → 0 entries (clean ✓)
+── CONNECT (plain)
+  [OK  ] OPEN
+  [OK  ] UPLOAD small / large / nested
+  ...
+  [OK  ] LIST final   → 0 entries (clean ✓)
+══ Plain FTP complete ══
+
 ══════════════════════════════════════════
- QFtpCompat test complete
+ Explicit FTPS test (port 2122)
 ══════════════════════════════════════════
+── CONNECT (Explicit FTPS – AUTH TLS)
+  [OK  ] OPEN (FTPS)
+  [OK  ] UPLOAD         → encrypted data channel
+  [OK  ] LIST           → tls_test.txt visible ✓
+  [OK  ] DOWNLOAD       → content match ✓
+  [OK  ] DELETE
+  [OK  ] LIST final     → 0 entries (clean ✓)
+══ Explicit FTPS complete ══
 ```
 
 ---

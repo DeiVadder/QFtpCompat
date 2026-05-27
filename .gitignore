@@ -10,5 +10,8 @@ build/
 # Qt Creator
 .qtcreator/
 
+# TLS test certificates – generated locally, never commit
+*.pem
+
 # Temp files
 struktur.txt

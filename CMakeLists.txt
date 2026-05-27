@@ -7,6 +7,16 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Network)
 
+# QSslSocket requires OpenSSL at runtime. CMake does not need to link it
+# directly – Qt handles it – but this check gives a clear error message
+# if the development headers are missing on the build machine.
+find_package(OpenSSL QUIET)
+if(NOT OpenSSL_FOUND)
+    message(WARNING "OpenSSL not found. QFtpCompat will build but FTPS "
+            "(EncryptionMode::Explicit/Implicit) will not work at runtime "
+            "unless OpenSSL is available on the target system.")
+endif()
+
 # ------------------------------------------------------------------
 # Sources
 # All headers must be listed explicitly so that AUTOMOC picks up
@@ -79,6 +89,11 @@ target_link_libraries(QFtpCompat
 
 target_compile_features(QFtpCompat PUBLIC cxx_std_17)
 
+# Suppress qDebug() output in all non-Debug configurations.
+# qWarning() and qCritical() are intentionally kept.
+target_compile_definitions(QFtpCompat PRIVATE
+    $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
+)
 
 # ------------------------------------------------------------------
 # Documentation  (Doxygen)

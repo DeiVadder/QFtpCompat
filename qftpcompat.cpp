@@ -6,7 +6,7 @@
 #include <QBuffer>
 #include <QDebug>
 #include <QQueue>
-#include <QTcpSocket>
+#include <QSslSocket>
 #include <QTimer>
 
 using Cmd = QFtpCompatInternal::Command;
@@ -22,27 +22,57 @@ static const    QString  AnonymousPass   = QStringLiteral("anonymous@");
 
 QFtpCompat::QFtpCompat(QObject *parent)
     : QObject(parent)
-    , m_control(new QTcpSocket(this))
-    , m_data(new QTcpSocket(this))
+    , m_control(new QSslSocket(this))
+    , m_data(new QSslSocket(this))
 {
     qDebug() << Q_FUNC_INFO << "created";
     // Control channel
-    connect(m_control, &QTcpSocket::connected,
+    connect(m_control, &QAbstractSocket::connected,
             this, &QFtpCompat::onControlConnected);
-    connect(m_control, &QTcpSocket::readyRead,
+    connect(m_control, &QAbstractSocket::readyRead,
             this, &QFtpCompat::onControlReadyRead);
     connect(m_control, &QAbstractSocket::errorOccurred,
             this, &QFtpCompat::onControlError);
 
+    // Control channel – SSL
+    connect(m_control, &QSslSocket::encrypted, this, [this]() {
+        qDebug() << Q_FUNC_INFO << "control channel encrypted";
+        if (m_ctrlState == ControlState::WaitingForControlHandshake) {
+            if (m_encMode == EncryptionMode::Implicit) {
+                // Implicit: TLS done, now expect the 220 banner
+                m_ctrlState = ControlState::WaitingForWelcome;
+            } else {
+                // Explicit: TLS done after AUTH TLS, send PBSZ 0
+                sendCommand("PBSZ 0");
+                m_ctrlState = ControlState::WaitingForPbszAck;
+            }
+        }
+    });
+    connect(m_control, &QSslSocket::sslErrors, this,
+            [this](const QList<QSslError> &errs) {
+                qDebug() << Q_FUNC_INFO << "control SSL errors:" << errs;
+                emit sslErrors(errs);
+            });
+
     // Data channel
-    connect(m_data, &QTcpSocket::connected,
-            this, &QFtpCompat::onDataConnected);
-    connect(m_data, &QTcpSocket::readyRead,
-            this, &QFtpCompat::onDataReadyRead);
-    connect(m_data, &QAbstractSocket::disconnected,
-            this, &QFtpCompat::onDataDisconnected);
-    connect(m_data, &QAbstractSocket::errorOccurred,
-            this, &QFtpCompat::onDataError);
+    connect(m_data, &QAbstractSocket::connected,    this, &QFtpCompat::onDataConnected);
+    connect(m_data, &QAbstractSocket::readyRead,    this, &QFtpCompat::onDataReadyRead);
+    connect(m_data, &QAbstractSocket::disconnected, this, &QFtpCompat::onDataDisconnected);
+    connect(m_data, &QAbstractSocket::errorOccurred,this, &QFtpCompat::onDataError);
+
+    // Data channel – SSL
+    connect(m_data, &QSslSocket::encrypted, this, [this]() {
+        qDebug() << Q_FUNC_INFO << "data channel encrypted";
+        if (m_ctrlState == ControlState::WaitingForDataHandshake) {
+            m_ctrlState = ControlState::WaitingForTransferStartAck;
+            sendDataTransferCommand();
+        }
+    });
+    connect(m_data, &QSslSocket::sslErrors, this,
+            [this](const QList<QSslError> &errs) {
+                qDebug() << Q_FUNC_INFO << "data SSL errors:" << errs;
+                emit sslErrors(errs);
+            });
 }
 
 QFtpCompat::~QFtpCompat()
@@ -56,13 +86,32 @@ QFtpCompat::~QFtpCompat()
 // Public API – connection
 // =============================================================================
 
-int QFtpCompat::open(const QUrl &url)
+int QFtpCompat::open(const QUrl &url, EncryptionMode mode)
 {
-    qDebug() << Q_FUNC_INFO << url.toString();
+    qDebug() << Q_FUNC_INFO << url.toString() << "encryption:" << static_cast<int>(mode);
     auto *cmd    = new Cmd;
     cmd->type    = Cmd::Type::Open;
     cmd->url     = url;
+    cmd->encMode = mode;
     return enqueue(cmd);
+}
+
+void QFtpCompat::setSslConfiguration(const QSslConfiguration &config)
+{
+    m_sslConfig = config;
+    m_control->setSslConfiguration(config);
+    m_data->setSslConfiguration(config);
+}
+
+QSslConfiguration QFtpCompat::sslConfiguration() const
+{
+    return m_sslConfig;
+}
+
+void QFtpCompat::ignoreSslErrors()
+{
+    m_control->ignoreSslErrors();
+    m_data->ignoreSslErrors();
 }
 
 void QFtpCompat::close()
@@ -266,6 +315,7 @@ void QFtpCompat::resetConnection()
     // Hard-close both channels (no QUIT, immediate TCP RST)
     m_data->abort();
     m_control->abort();
+    m_encMode = EncryptionMode::None;
 }
 
 void QFtpCompat::clearPendingCommands()
@@ -318,20 +368,39 @@ void QFtpCompat::startCurrentCommand()
 {
     Q_ASSERT(m_current);
 
+    // All commands except Open require an active login.
+    // Fail fast instead of writing to a closed socket and hanging.
+    if (m_current->type != Cmd::Type::Open
+        && m_current->type != Cmd::Type::Close
+        && m_state != State::LoggedIn) {
+        qWarning() << Q_FUNC_INFO
+                   << "not logged in – failing command"
+                   << static_cast<int>(m_current->type);
+        setError(Error::NotLoggedIn,
+                 QStringLiteral("command %1 requires login")
+                     .arg(static_cast<int>(m_current->type)));
+        finalizeCommand(true);
+        return;
+    }
+
     switch (m_current->type) {
 
     case Cmd::Type::Open: {
-        // Connect + login in one command.
-        // If already connected, skip straight to login.
         if (m_state == State::LoggedIn) {
-            // Nothing to do – already logged in
             finalizeCommand(false);
             return;
         }
         if (m_state == State::Unconnected) {
             const QUrl &url = m_current->url;
+            m_encMode = m_current->encMode;
             m_host = url.host();
-            m_port = (url.port() > 0) ? static_cast<quint16>(url.port()) : DefaultFtpPort;
+
+            // Default port: 990 for Implicit FTPS, 21 for everything else
+            constexpr quint16 ImplicitFtpsPort = 990;
+            m_port = (url.port() > 0)
+                         ? static_cast<quint16>(url.port())
+                         : (m_encMode == EncryptionMode::Implicit ? ImplicitFtpsPort
+                                                                  : DefaultFtpPort);
 
             if (m_host.trimmed().isEmpty()) {
                 setError(Error::HostNotFound,
@@ -341,13 +410,29 @@ void QFtpCompat::startCurrentCommand()
                 return;
             }
 
-            qDebug() << Q_FUNC_INFO << "Connecting to" << m_host << ":" << m_port;
+            // Apply SSL configuration to both sockets
+            m_control->setSslConfiguration(m_sslConfig);
+            m_data->setSslConfiguration(m_sslConfig);
+
+            qDebug() << Q_FUNC_INFO
+                     << "Connecting to"
+                     << m_host << ":" << m_port
+                     << "encryption:" << static_cast<int>(m_encMode);
+
             setState(State::Connecting);
-            m_ctrlState = ControlState::WaitingForWelcome;
-            m_control->connectToHost(m_host, m_port);
+
+            if (m_encMode == EncryptionMode::Implicit) {
+                // Implicit FTPS: TLS from the first byte
+                // Wait for encrypted() signal before expecting 220 banner
+                m_ctrlState = ControlState::WaitingForControlHandshake;
+                m_control->connectToHostEncrypted(m_host, m_port);
+            } else {
+                // Plain FTP or Explicit FTPS: plain TCP connect first
+                m_ctrlState = ControlState::WaitingForWelcome;
+                m_control->connectToHost(m_host, m_port);
+            }
             return;
         }
-        // State::Connecting / State::Connected / State::Closing – shouldn't happen
         setError(Error::NetworkError,
                  QStringLiteral("open(): called in unexpected state %1")
                      .arg(static_cast<int>(m_state)));
@@ -537,10 +622,16 @@ void QFtpCompat::processResponse(int code, const QByteArray &message)
     case ControlState::WaitingForWelcome:
         if (code == 220) {
             setState(State::Connected);
-            const QUrl &url = m_current->url;
-            const QString user = url.userName().isEmpty() ? AnonymousUser : url.userName();
-            sendCommand("USER " + user.toUtf8());
-            m_ctrlState = ControlState::WaitingForUserAck;
+            if (m_encMode == EncryptionMode::Explicit) {
+                // Explicit FTPS: upgrade the control channel to TLS first
+                sendCommand("AUTH TLS");
+                m_ctrlState = ControlState::WaitingForAuthTlsAck;
+            } else {
+                const QUrl &url = m_current->url;
+                const QString user = url.userName().isEmpty() ? AnonymousUser : url.userName();
+                sendCommand("USER " + user.toUtf8());
+                m_ctrlState = ControlState::WaitingForUserAck;
+            }
         } else {
             setError(Error::ServerError,
                      QStringLiteral("open(): expected 220 welcome banner, got %1: '%2'")
@@ -783,6 +874,56 @@ void QFtpCompat::processResponse(int code, const QByteArray &message)
         }
         break;
 
+    // ------------------------------------------------------------------
+    // Explicit FTPS: AUTH TLS → PBSZ 0 → PROT P → USER/PASS
+    // ------------------------------------------------------------------
+    case ControlState::WaitingForAuthTlsAck:
+        if (code == 234) {
+            // Server accepted AUTH TLS – start TLS handshake on control socket
+            m_ctrlState = ControlState::WaitingForControlHandshake;
+            m_control->startClientEncryption();
+        } else {
+            setError(Error::AuthTlsRejected,
+                     QStringLiteral("AUTH TLS rejected (code %1): '%2'")
+                         .arg(code).arg(QString::fromUtf8(message)));
+            finalizeCommand(true);
+        }
+        break;
+
+    case ControlState::WaitingForPbszAck:
+        if (code == 200) {
+            sendCommand("PROT P"); // Protect data channel
+            m_ctrlState = ControlState::WaitingForProtAck;
+        } else {
+            setError(Error::TlsHandshakeFailed,
+                     QStringLiteral("PBSZ rejected (code %1): '%2'")
+                         .arg(code).arg(QString::fromUtf8(message)));
+            finalizeCommand(true);
+        }
+        break;
+
+    case ControlState::WaitingForProtAck:
+        if (code == 200) {
+            // Data channel protection confirmed – proceed with login
+            const QUrl &url = m_current->url;
+            const QString user = url.userName().isEmpty() ? AnonymousUser : url.userName();
+            sendCommand("USER " + user.toUtf8());
+            m_ctrlState = ControlState::WaitingForUserAck;
+        } else {
+            setError(Error::TlsHandshakeFailed,
+                     QStringLiteral("PROT P rejected (code %1): '%2'")
+                         .arg(code).arg(QString::fromUtf8(message)));
+            finalizeCommand(true);
+        }
+        break;
+
+    case ControlState::WaitingForControlHandshake:
+    case ControlState::WaitingForDataHandshake:
+        // Handled by QSslSocket::encrypted() signal – server responses
+        // during handshake are unexpected and ignored here.
+        qDebug() << Q_FUNC_INFO << "Response during TLS handshake (ignored):" << code;
+        break;
+
     case ControlState::Idle:
         qDebug() << Q_FUNC_INFO << "Unexpected response in Idle state:" << code << message;
         break;
@@ -847,16 +988,33 @@ void QFtpCompat::onDataConnected()
 {
     qDebug() << Q_FUNC_INFO;
 
+    if (!m_current) { return; }
+
+    if (m_encMode != EncryptionMode::None) {
+        // FTPS: encrypt the data channel before sending RETR/STOR/LIST
+        qDebug() << Q_FUNC_INFO << "starting data channel TLS handshake";
+        m_ctrlState = ControlState::WaitingForDataHandshake;
+        startDataChannelEncryption();
+    } else {
+        m_ctrlState = ControlState::WaitingForTransferStartAck;
+        sendDataTransferCommand();
+    }
+}
+
+void QFtpCompat::startDataChannelEncryption()
+{
+    m_data->setSslConfiguration(m_sslConfig);
+    m_data->startClientEncryption();
+}
+
+void QFtpCompat::sendDataTransferCommand()
+{
     if (!m_current) {
         return;
     }
 
-    m_ctrlState = ControlState::WaitingForTransferStartAck;
-
     switch (m_current->type) {
     case Cmd::Type::List:
-        // Some servers are strict about NLST vs LIST.
-        // Use LIST for full metadata; use NLST for name-only listings.
         sendCommand("LIST" + (m_current->url.path().isEmpty()
                                   ? QByteArray{}
                                   : " " + m_current->url.path().toUtf8()));

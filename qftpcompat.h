@@ -11,12 +11,14 @@
 
 #include <QAbstractSocket>
 #include <QObject>
-#include <QUrl>
 #include <QQueue>
+#include <QSslConfiguration>
+#include <QSslError>
+#include <QSslSocket>
+#include <QUrl>
 
 class QIODevice;
 class QByteArray;
-class QTcpSocket;
 
 namespace QFtpCompatInternal { struct Command; }
 
@@ -62,6 +64,7 @@ namespace QFtpCompatInternal { struct Command; }
  * thread).  Do not call any method from a different thread.
  *
  * \date 2024 – Created
+ * \date 2026 – Updated
  */
 class QFtpCompat : public QObject
 {
@@ -104,6 +107,9 @@ public:
         Aborted,            ///< Operation cancelled by \ref abort().
         TransferFailed,     ///< Data channel closed before transfer completed.
         UnknownError,       ///< Catch-all for unclassified errors.
+        // TLS-specific
+        TlsHandshakeFailed, ///< TLS handshake failed on control or data channel.
+        AuthTlsRejected,    ///< Server rejected the AUTH TLS command.
     };
     Q_ENUM(Error)
 
@@ -133,6 +139,19 @@ public:
         Ascii,  ///< TYPE A – text transfer.  Protocol-level TYPE sent; no CRLF transform (TODO).
     };
     Q_ENUM(TransferType)
+
+    /**
+     * \brief FTP encryption mode.
+     * \value None     Plain FTP – default, fully backward-compatible.
+     * \value Explicit Explicit FTPS (AUTH TLS, port 21).
+     * \value Implicit Implicit FTPS (TLS from first byte, port 990).
+     */
+    enum class EncryptionMode {
+        None,
+        Explicit,
+        Implicit,
+    };
+    Q_ENUM(EncryptionMode)
 
     // -----------------------------------------------------------------
     // Construction
@@ -173,7 +192,12 @@ public:
      * \param url FTP URL carrying at minimum a host name.
      * \return Command ID for tracking via \ref commandFinished.
      */
-    int open(const QUrl &url);
+    /// \brief Connect and log in.
+    /// \param url     Server URL (scheme, host, port, user, password).
+    /// \param mode    Encryption mode.  Default: \c EncryptionMode::None
+    ///                 (plain FTP – backward-compatible).
+    int open(const QUrl &url,
+             EncryptionMode mode = EncryptionMode::None);
 
     /**
      * \brief Sends QUIT and closes the connection gracefully.
@@ -333,6 +357,32 @@ public:
      *
      * The currently executing command is not affected.
      */
+    // -----------------------------------------------------------------
+    // TLS / SSL
+    // -----------------------------------------------------------------
+
+    /**
+     * \brief Sets the SSL configuration used for both control and data channels.
+     *
+     * Call before \ref open() to customise certificates, peer-verify mode, etc.
+     * The default configuration uses \c QSslSocket::VerifyPeer.
+     *
+     * \par Embedded / self-signed servers
+     * \code
+     * QSslConfiguration cfg = QSslConfiguration::defaultConfiguration();
+     * cfg.setPeerVerifyMode(QSslSocket::VerifyNone);
+     * ftp->setSslConfiguration(cfg);
+     * \endcode
+     */
+    void setSslConfiguration(const QSslConfiguration &config);
+
+    /// Returns the current SSL configuration.
+    [[nodiscard]] QSslConfiguration sslConfiguration() const;
+
+    /// Instructs both sockets to ignore all pending SSL errors.
+    /// Call from a \ref sslErrors handler to accept self-signed certificates.
+    void ignoreSslErrors();
+
     void clearPendingCommands();
 
     /// Hard-resets the FTP session: clears queue, aborts TCP sockets, sets
@@ -386,6 +436,16 @@ signals:
      */
     void rawCommandReply(int code, QString detail);
 
+    /**
+     * \brief Emitted when SSL/TLS errors occur.
+     *
+     * To accept self-signed certificates (common on embedded servers):
+     * \code
+     * connect(ftp, &QFtpCompat::sslErrors, ftp, &QFtpCompat::ignoreSslErrors);
+     * \endcode
+     */
+    void sslErrors(const QList<QSslError> &errors);
+
 private slots:
     void onControlConnected();
     void onControlReadyRead();
@@ -417,6 +477,12 @@ private:
         WaitingForRntoAck,
         WaitingForAbortAck,
         WaitingForQuitAck,
+        // TLS-specific states
+        WaitingForAuthTlsAck,       ///< AUTH TLS sent, waiting for 234
+        WaitingForPbszAck,          ///< PBSZ 0 sent, waiting for 200
+        WaitingForProtAck,          ///< PROT P sent, waiting for 200
+        WaitingForControlHandshake, ///< startClientEncryption() called on control socket
+        WaitingForDataHandshake,    ///< startClientEncryption() called on data socket
     };
 
     // -----------------------------------------------------------------
@@ -434,9 +500,11 @@ private:
     void sendCommand(const QByteArray &cmd);
     void processResponse(int code, const QByteArray &message);
 
-    void beginDataTransfer();   ///< Sends TYPE then PASV
+    void beginDataTransfer();       ///< Sends TYPE then PASV
     void sendTypeCommand();
     void sendPasv();
+    void sendDataTransferCommand(); ///< Sends RETR / STOR / LIST after data channel is ready
+    void startDataChannelEncryption(); ///< Calls startClientEncryption on data socket
 
     [[nodiscard]] bool parsePasvAddress(const QByteArray &msg,
                                         QString &host, quint16 &port) const;
@@ -449,8 +517,11 @@ private:
     // -----------------------------------------------------------------
     // Data
     // -----------------------------------------------------------------
-    QTcpSocket *m_control{nullptr};
-    QTcpSocket *m_data{nullptr};
+    QSslSocket *m_control{nullptr};
+    QSslSocket *m_data{nullptr};
+
+    EncryptionMode  m_encMode{EncryptionMode::None};
+    QSslConfiguration m_sslConfig{QSslConfiguration::defaultConfiguration()};
 
     QByteArray m_dataReadBuf;     ///< Accumulates download payload
 
